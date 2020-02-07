@@ -159,7 +159,7 @@ def block_short(x,chanel,training):
     return tf.nn.relu(resadded)       
 
 ##########################################
-class vgg16:
+class ResNet:
     def __init__(self, imgs, sess=None,training=True):
         self.imgs = imgs
         self.convlayers()
@@ -211,10 +211,10 @@ if __name__ == '__main__':
     values = [0.1,0.01,0.001,0.0001]
     learning_rate = tf.train.piecewise_constant(global_step,boundaries, values)
     
-    vgg = vgg16(imgs, sess, training)
+    resnet = ResNet(imgs, sess, training)
 #####################################################################    
     with tf.name_scope("loss"):
-        loss_main = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=vgg.my_final,labels= label_batch_placeholder ), name="loss_main")  
+        loss_main = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=resnet.my_final,labels= label_batch_placeholder ), name="loss_main")  
         reg_variables_main = tf.trainable_variables(scope = 'main')
         exceptbn_vars = []
         for i in range(len(reg_variables_main)):
@@ -236,7 +236,7 @@ if __name__ == '__main__':
 
 ##########################################################
     with tf.name_scope("accuracy"):
-        correct_prediction_main = tf.equal(tf.argmax(vgg.probs, 1), tf.argmax(label_batch_placeholder , 1))  
+        correct_prediction_main = tf.equal(tf.argmax(resnet.probs, 1), tf.argmax(label_batch_placeholder , 1))  
         accuracy_main = tf.reduce_mean(tf.cast(correct_prediction_main, tf.float32))
         
         tf.summary.scalar("accuracy_main", accuracy_main)  
